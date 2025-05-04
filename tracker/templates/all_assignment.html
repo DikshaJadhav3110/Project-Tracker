@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>All Assignments</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --sunshine-yellow: #FFF9C4;
+            --soft-blue: #B3E5FC;
+            --bubblegum-pink: #FFCDD2;
+            --peach-orange: #FFCCBC;
+            --lavender: #D1C4E9;
+            --high-priority: #FF8A80;
+            --medium-priority: #FFD180;
+            --low-priority: #CCFF90;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #FAFAFA;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background: #f1f1f1;
+            margin-right: 5px;
+            border-radius: 5px 5px 0 0;
+        }
+        
+        .tab.active {
+            background: var(--soft-blue);
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .assignment-card {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .assignment-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .priority-badge {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .high {
+            background: var(--high-priority);
+            color: white;
+        }
+        
+        .medium {
+            background: var(--medium-priority);
+            color: #333;
+        }
+        
+        .low {
+            background: var(--low-priority);
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>All Assignments</h1>
+    
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab('assigned')">Assigned</div>
+        <div class="tab" onclick="switchTab('submitted')">Submitted</div>
+        <div class="tab" onclick="switchTab('missed')">Missed</div>
+        <div class="tab" onclick="switchTab('hidden')">Hidden</div>
+    </div>
+    
+    <div id="assigned" class="tab-content active">
+        {% for assignment in assigned %}
+        <!-- <div class="assignment-card" onclick="window.location.href='{% url 'assignment_detail' assignment.id %}'"> -->
+            <h3>{{ assignment.title }}</h3>
+            <p>{{ assignment.subject }} - Due: {{ assignment.deadline }}</p>
+            <span class="priority-badge {{ assignment.priority|lower }}">{{ assignment.priority }}</span>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div id="submitted" class="tab-content">
+        {% for assignment in submitted %}
+        <!-- <div class="assignment-card" onclick="window.location.href='{% url 'assignment_detail' assignment.id %}'"> -->
+            <h3>{{ assignment.title }}</h3>
+            <p>{{ assignment.subject }} - Grade: {{ assignment.grade }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div id="missed" class="tab-content">
+        <p>No missed assignments</p>
+    </div>
+    
+    <div id="hidden" class="tab-content">
+        <p>No hidden assignments</p>
+    </div>
+
+    <script>
+        function switchTab(tabId) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Deactivate all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Activate selected tab
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Assignment Details</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link rel="stylesheet" href="{% static '/style.css' %}" />
+    <!-- Link to CSS -->
+  </head>
+  <body>
+    <!-- Decorative floating circles -->
+    <div class="floating circle-1"></div>
+    <div class="floating circle-2"></div>
+
+    <div class="dashboard-container">
+      <!-- Header -->
+      <header class="header">
+        <div class="logo"><i class="fas fa-book"></i> Assignment Dashboard</div>
+        <nav class="nav-items">
+          <!-- <a href="#" class="nav-item"><i class="fas fa-home"></i>Home</a> -->
+          <a href="#" class="nav-item"
+            ><i class="fas fa-tasks"></i>My Assignments</a
+          >
+          <a href="#" class="logout-btn"
+            ><i class="fas fa-sign-out-alt"></i>Logout</a
+          >
+        </nav>
+      </header>
+
+      <!-- Assignments -->
+      <div class="assignments-container">
+        <div class="assignment-card">
+          <div class="assignment-header">
+            <div>
+              <div class="assignment-title">Operating System Project</div>
+              <div class="assignment-meta">
+                <div class="meta-item subject">
+                  <i class="fas fa-book-open"></i>Operating System
+                </div>
+                <div class="meta-item priority-high">
+                  <i class="fas fa-exclamation-circle"></i>High Priority
+                </div>
+                <div class="meta-item deadline">
+                  <i class="fas fa-calendar-alt"></i>Due: May 10, 2025
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="assignment-body">
+            <div class="section-title">
+              <i class="fas fa-info-circle"></i>Description
+            </div>
+            <div class="description">
+              Implement memory allocation strategies (Best Fit, Worst Fit, First
+              Fit) using dynamic partitioning in Java. Use data structures to
+              simulate memory blocks and process allocations. Output allocation
+              and fragmentation info.
+            </div>
+
+            <div class="section-title">
+              <i class="fas fa-file-download"></i>Resources
+            </div>
+            <div class="pdf-actions">
+              <a href="assignment-details.pdf" class="btn btn-primary" download
+                ><i class="fas fa-file-pdf"></i>Download PDF</a
+              >
+              <a href="#" class="btn btn-secondary"
+                ><i class="fas fa-eye"></i>Preview</a
+              >
+            </div>
+
+            <div class="section-title">
+              <i class="fas fa-upload"></i>Upload Your Work
+            </div>
+
+            <div class="upload-section">
+              <div class="upload-area" id="uploadArea">
+                <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                <div class="upload-text">
+                  <h3>Upload your work</h3>
+                  <p>Click to browse or drag and drop PDF file</p>
+                </div>
+                <input
+                  type="file"
+                  id="fileInput"
+                  class="file-input"
+                  accept=".pdf"
+                />
+              </div>
+              <div class="file-info" id="fileInfo">
+                <i class="fas fa-file-pdf"></i>
+                <span id="fileName">No file selected</span>
+                <button id="removeFile" class="remove-btn">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="submit-section">
+              <button class="btn btn-submit">
+                <i class="fas fa-paper-plane"></i>Submit Assignment
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function showFileName(event) {
+        const fileInput = event.target;
+        const fileInfo = document.getElementById("file-info");
+        const fileNameSpan = document.getElementById("file-name");
+        if (fileInput.files.length > 0) {
+          fileInfo.style.display = "flex";
+          fileNameSpan.textContent = fileInput.files[0].name;
+        }
+      }
+    </script>
+  </body>
+</html>
