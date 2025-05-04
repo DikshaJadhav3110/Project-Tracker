@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <style>
+      body {
+        background: #f2f6f7;
+        font-family: "Segoe UI", sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .login-container {
+        background: #ffffff;
+        padding: 40px;
+        border-radius: 15px;
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        width: 350px;
+        text-align: center;
+      }
+
+      .login-container h2 {
+        margin-bottom: 20px;
+        color: #6c63ff;
+      }
+
+      input[type="text"],
+      input[type="password"] {
+        width: 90%;
+        padding: 12px;
+        margin: 10px 0;
+        border: 1px solid #ddd;
+        border-radius: 15px;
+        outline: none;
+      }
+
+      button {
+        background: #6c63ff;
+        color: white;
+        border: none;
+        padding: 12px;
+        width: 95%;
+        border-radius: 15px;
+        font-size: 16px;
+        margin-top: 20px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #5a54d1;
+      }
+
+      .error {
+        color: red;
+        font-size: 14px;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <h2>Login</h2>
+      <form method="POST">
+        {% csrf_token %} {{ form.as_p }}
+        <!-- Render the form fields dynamically -->
+        <button type="submit">Login</button>
+      </form>
+      {% if error %}
+      <div class="error">{{ error }}</div>
+      {% endif %}
+    </div>
+  </body>
+</html>
