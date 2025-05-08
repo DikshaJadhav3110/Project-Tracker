@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -217,35 +218,37 @@
     <div class="floating circle-2"></div>
 
     <div class="dashboard-container">
-      <!-- Welcome Message -->
-      <h1>Welcome {{ faculty_name }}</h1>
+        <!-- Welcome Message -->
+        <h1>Welcome {{ faculty_name }}</h1>
 
-      <!-- Cards Section -->
-      <div class="cards-container">
-        <!-- Card 1: Add a New Assignment -->
-        <div class="card">
-          <h2>Add a New Assignment</h2>
-          <p>
-            Create and assign new work to your students with our easy-to-use
-            form. Design engaging tasks with clear instructions and deadlines.
-          </p>
-          <button onclick="location.href='/tracker/add-assignment'">
-            Add Assignment
-          </button>
-        </div>
+        {% block content %}
+        <!-- Default content (cards) will show when no other content is provided -->
+        <div class="cards-container">
+            <!-- Card 1: Add a New Assignment -->
+            <div class="card">
+                <h2>Add a New Assignment</h2>
+                <p>
+                    Create and assign new work to your students with our easy-to-use
+                    form. Design engaging tasks with clear instructions and deadlines.
+                </p>
+                <button onclick="location.href='/tracker/add-assignment'">
+                    Add Assignment
+                </button>
+            </div>
 
-        <!-- Card 2: Scheduled Assignment -->
-        <div class="card">
-          <h2>Scheduled Assignment</h2>
-          <p>
-            View all assignments. Monitor upcoming deadlines and student
-            progress.
-          </p>
-          <button onclick="location.href='/scheduled-assignments'">
-            View Scheduled
-          </button>
+            <!-- Card 2: Scheduled Assignment -->
+            <div class="card">
+                <h2>Scheduled Assignment</h2>
+                <p>
+                    View all assignments. Monitor upcoming deadlines and student
+                    progress.
+                </p>
+                <button onclick="location.href='{% url 'scheduled_assignments' %}'">
+                    View Scheduled
+                </button>
+            </div>
         </div>
-      </div>
+        {% endblock %}
     </div>
-  </body>
+</body>
 </html>

@@ -4,14 +4,8 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Assignment Details</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="{% static '/style.css' %}" />
     <style>
       /* Add these styles to your CSS file */
@@ -95,10 +89,6 @@
       <!-- Header -->
       <header class="header">
         <div class="logo"><i class="fas fa-book"></i> Assignment Dashboard</div>
-          <a href="#" class="logout-btn"
-            ><i class="fas fa-sign-out-alt"></i>Logout</a
-          >
-        </nav>
       </header>
 
       <!-- Assignments -->
@@ -106,16 +96,16 @@
         <div class="assignment-card">
           <div class="assignment-header">
             <div>
-              <div class="assignment-title">Operating System Project</div>
+              <div class="assignment-title">{{ assignment.title }}</div>
               <div class="assignment-meta">
                 <div class="meta-item subject">
-                  <i class="fas fa-book-open"></i>Operating System
+                  <i class="fas fa-book-open"></i>{{ assignment.subject }}
                 </div>
-                <div class="meta-item priority-high">
-                  <i class="fas fa-exclamation-circle"></i>High Priority
+                <div class="meta-item priority-{{ submission.priority|lower }}">
+                  <i class="fas fa-exclamation-circle"></i>{{ submission.priority }} Priority
                 </div>
                 <div class="meta-item deadline">
-                  <i class="fas fa-calendar-alt"></i>Due: May 10, 2025
+                  <i class="fas fa-calendar-alt"></i>Due: {{ assignment.deadline|date:"M d, Y" }}
                 </div>
               </div>
             </div>
@@ -126,163 +116,181 @@
               <i class="fas fa-info-circle"></i>Description
             </div>
             <div class="description">
-              Implement memory allocation strategies (Best Fit, Worst Fit, First
-              Fit) using dynamic partitioning in Java. Use data structures to
-              simulate memory blocks and process allocations. Output allocation
-              and fragmentation info.
+              {{ assignment.description }}
             </div>
 
             <div class="section-title">
               <i class="fas fa-file-download"></i>Resources
             </div>
             <div class="pdf-actions">
-              <a href="assignment-details.pdf" class="btn btn-primary" download
-                ><i class="fas fa-file-pdf"></i>Download PDF</a
-              >
+              {% if assignment.upload_pdf %}
+              <a href="{{ assignment.upload_pdf.url }}" class="btn btn-primary" download>
+                <i class="fas fa-file-pdf"></i>Download PDF
+              </a>
+              {% else %}
+              <p>No resources provided</p>
+              {% endif %}
             </div>
 
+            {% if submission.status != 'submitted' %}
             <div class="section-title">
               <i class="fas fa-upload"></i>Upload Your Work
             </div>
-
-            <div class="upload-section">
-              <!-- Video Upload -->
-              <div>
-                <div class="upload-type-title">1. Upload Video Demonstration</div>
-                <div class="upload-area" id="videoUploadArea">
-                  <i class="fas fa-video upload-icon"></i>
-                  <div class="upload-text">
-                    <h3>Upload Video File</h3>
-                    <p>Click to browse or drag and drop MP4 file</p>
+            <form method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              <div class="upload-section">
+                <!-- Video Upload -->
+                <div>
+                  <div class="upload-type-title">1. Upload Video Demonstration</div>
+                  <div class="upload-area" id="videoUploadArea">
+                    <i class="fas fa-video upload-icon"></i>
+                    <div class="upload-text">
+                      <h3>Upload Video File</h3>
+                      <p>Click to browse or drag and drop MP4 file</p>
+                    </div>
+                    {{ form.submitted_video }}
                   </div>
-                  <input
-                    type="file"
-                    id="videoInput"
-                    class="file-input"
-                    accept=".mp4,.mov,.avi"
-                  />
+                  <div class="file-info" id="videoFileInfo">
+                    <i class="fas fa-file-video"></i>
+                    <span id="videoFileName">No file selected</span>
+                    <button type="button" id="removeVideoFile" class="remove-btn">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
                 </div>
-                <div class="file-info" id="videoFileInfo">
-                  <i class="fas fa-file-video"></i>
-                  <span id="videoFileName">No file selected</span>
-                  <button id="removeVideoFile" class="remove-btn">
-                    <i class="fas fa-times"></i>
-                  </button>
+
+                <!-- Zip/Folder Upload -->
+                <div>
+                  <div class="upload-type-title">2. Upload Source Code (ZIP)</div>
+                  <div class="upload-area" id="zipUploadArea">
+                    <i class="fas fa-file-archive upload-icon"></i>
+                    <div class="upload-text">
+                      <h3>Upload ZIP Folder</h3>
+                      <p>Click to browse or drag and drop ZIP file</p>
+                    </div>
+                    {{ form.submitted_zip }}
+                  </div>
+                  <div class="file-info" id="zipFileInfo">
+                    <i class="fas fa-file-archive"></i>
+                    <span id="zipFileName">No file selected</span>
+                    <button type="button" id="removeZipFile" class="remove-btn">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- PDF Upload -->
+                <div>
+                  <div class="upload-type-title">3. Upload Report (PDF)</div>
+                  <div class="upload-area" id="pdfUploadArea">
+                    <i class="fas fa-file-pdf upload-icon"></i>
+                    <div class="upload-text">
+                      <h3>Upload PDF Report</h3>
+                      <p>Click to browse or drag and drop PDF file</p>
+                    </div>
+                    {{ form.submitted_pdf }}
+                  </div>
+                  <div class="file-info" id="pdfFileInfo">
+                    <i class="fas fa-file-pdf"></i>
+                    <span id="pdfFileName">No file selected</span>
+                    <button type="button" id="removePdfFile" class="remove-btn">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              <!-- Zip/Folder Upload -->
-              <div>
-                <div class="upload-type-title">2. Upload Source Code (ZIP)</div>
-                <div class="upload-area" id="zipUploadArea">
-                  <i class="fas fa-file-archive upload-icon"></i>
-                  <div class="upload-text">
-                    <h3>Upload ZIP Folder</h3>
-                    <p>Click to browse or drag and drop ZIP file</p>
-                  </div>
-                  <input
-                    type="file"
-                    id="zipInput"
-                    class="file-input"
-                    accept=".zip,.rar,.7z"
-                  />
-                </div>
-                <div class="file-info" id="zipFileInfo">
-                  <i class="fas fa-file-archive"></i>
-                  <span id="zipFileName">No file selected</span>
-                  <button id="removeZipFile" class="remove-btn">
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div>
+              <div class="submit-section">
+                <button type="submit" class="btn btn-submit">
+                  <i class="fas fa-paper-plane"></i>Submit Assignment
+                </button>
               </div>
-
-              <!-- PDF Upload -->
-              <div>
-                <div class="upload-type-title">3. Upload Report (PDF)</div>
-                <div class="upload-area" id="pdfUploadArea">
-                  <i class="fas fa-file-pdf upload-icon"></i>
-                  <div class="upload-text">
-                    <h3>Upload PDF Report</h3>
-                    <p>Click to browse or drag and drop PDF file</p>
-                  </div>
-                  <input
-                    type="file"
-                    id="pdfInput"
-                    class="file-input"
-                    accept=".pdf"
-                  />
-                </div>
-                <div class="file-info" id="pdfFileInfo">
-                  <i class="fas fa-file-pdf"></i>
-                  <span id="pdfFileName">No file selected</span>
-                  <button id="removePdfFile" class="remove-btn">
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div>
-              </div>
+            </form>
+            {% else %}
+            <div class="section-title">
+              <i class="fas fa-check-circle"></i>Submitted Work
             </div>
-
-            <div class="submit-section">
-              <button class="btn btn-submit">
-                <i class="fas fa-paper-plane"></i>Submit Assignment
-              </button>
+            <div class="submitted-files">
+              {% if submission.submitted_pdf %}
+              <p><strong>PDF Report:</strong> <a href="{{ submission.submitted_pdf.url }}" download>Download</a></p>
+              {% endif %}
+              
+              {% if submission.submitted_video %}
+              <p><strong>Video Demonstration:</strong> <a href="{{ submission.submitted_video.url }}" download>Download</a></p>
+              {% endif %}
+              
+              {% if submission.submitted_zip %}
+              <p><strong>Source Code (ZIP):</strong> <a href="{{ submission.submitted_zip.url }}" download>Download</a></p>
+              {% endif %}
+              
+              <p><strong>Submitted on:</strong> {{ submission.submission_time|date:"M d, Y H:i" }}</p>
             </div>
+            {% endif %}
           </div>
         </div>
       </div>
     </div>
 
     <script>
-      // Setup for video upload
-      setupFileUpload('videoInput', 'videoFileInfo', 'videoFileName', 'removeVideoFile');
-      // Setup for zip upload
-      setupFileUpload('zipInput', 'zipFileInfo', 'zipFileName', 'removeZipFile');
-      // Setup for pdf upload
-      setupFileUpload('pdfInput', 'pdfFileInfo', 'pdfFileName', 'removePdfFile');
+      // Setup file upload interactions
+      document.addEventListener('DOMContentLoaded', function() {
+        // Setup for video upload
+        setupFileUpload('id_submitted_video', 'videoFileInfo', 'videoFileName', 'removeVideoFile');
+        // Setup for zip upload
+        setupFileUpload('id_submitted_zip', 'zipFileInfo', 'zipFileName', 'removeZipFile');
+        // Setup for pdf upload
+        setupFileUpload('id_submitted_pdf', 'pdfFileInfo', 'pdfFileName', 'removePdfFile');
 
-      function setupFileUpload(inputId, infoId, fileNameId, removeBtnId) {
-        const fileInput = document.getElementById(inputId);
-        const fileInfo = document.getElementById(infoId);
-        const fileNameSpan = document.getElementById(fileNameId);
-        const removeBtn = document.getElementById(removeBtnId);
-        const uploadArea = document.getElementById(inputId.replace('Input', 'UploadArea'));
+        function setupFileUpload(inputId, infoId, fileNameId, removeBtnId) {
+          const fileInput = document.getElementById(inputId);
+          const fileInfo = document.getElementById(infoId);
+          const fileNameSpan = document.getElementById(fileNameId);
+          const removeBtn = document.getElementById(removeBtnId);
+          const uploadArea = fileInput.parentElement;
 
-        fileInput.addEventListener('change', function(event) {
           if (fileInput.files.length > 0) {
             fileInfo.style.display = "flex";
             fileNameSpan.textContent = fileInput.files[0].name;
           }
-        });
 
-        removeBtn.addEventListener('click', function(e) {
-          e.stopPropagation();
-          fileInput.value = '';
-          fileInfo.style.display = "none";
-        });
+          fileInput.addEventListener('change', function(event) {
+            if (fileInput.files.length > 0) {
+              fileInfo.style.display = "flex";
+              fileNameSpan.textContent = fileInput.files[0].name;
+            }
+          });
 
-        uploadArea.addEventListener('click', function() {
-          fileInput.click();
-        });
+          removeBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            fileInput.value = '';
+            fileInfo.style.display = "none";
+          });
 
-        uploadArea.addEventListener('dragover', function(e) {
-          e.preventDefault();
-          uploadArea.style.background = "rgba(179, 229, 252, 0.3)";
-        });
+          uploadArea.addEventListener('click', function() {
+            fileInput.click();
+          });
 
-        uploadArea.addEventListener('dragleave', function() {
-          uploadArea.style.background = "rgba(255, 255, 255, 0.7)";
-        });
+          uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadArea.style.background = "rgba(179, 229, 252, 0.3)";
+          });
 
-        uploadArea.addEventListener('drop', function(e) {
-          e.preventDefault();
-          uploadArea.style.background = "rgba(255, 255, 255, 0.7)";
-          if (e.dataTransfer.files.length) {
-            fileInput.files = e.dataTransfer.files;
-            fileInfo.style.display = "flex";
-            fileNameSpan.textContent = fileInput.files[0].name;
-          }
-        });
-      }
+          uploadArea.addEventListener('dragleave', function() {
+            uploadArea.style.background = "rgba(255, 255, 255, 0.7)";
+          });
+
+          uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadArea.style.background = "rgba(255, 255, 255, 0.7)";
+            if (e.dataTransfer.files.length) {
+              fileInput.files = e.dataTransfer.files;
+              fileInfo.style.display = "flex";
+              fileNameSpan.textContent = fileInput.files[0].name;
+            }
+          });
+        }
+      });
     </script>
   </body>
 </html>
+

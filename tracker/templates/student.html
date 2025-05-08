@@ -424,7 +424,7 @@
             <i class="fas fa-envelope"></i>
             <span>Messages</span>
           </a>
-          <a href="#" class="logout-btn" onclick="alert('Logout clicked!')">
+          <a href="{% url 'logout' %}" class="logout-btn">
             <i class="fas fa-sign-out-alt"></i>
             <span>Logout</span>
           </a>
@@ -432,7 +432,7 @@
       </header>
 
       <!-- Welcome Message -->
-      <h1 class="welcome-message">Welcome, Swati Jadhav</h1>
+      <h1 class="welcome-message">Welcome, {{ student_name }}</h1>
 
       <!-- Filter Section -->
       <div class="filter-section">
@@ -476,175 +476,50 @@
             </tr>
           </thead>
           <tbody>
+            {% for submission in submissions %}
             <tr>
-              <td>1</td>
-              <td>Linear Algebra Problems</td>
-              <td>Mathematics</td>
-              <td>
-                <span class="faculty-name">Prof. Smith</span>
-              </td>
-              <td>-</td>
-              <td>May 15, 2023</td>
-              <td>
-                <span class="status-badge pending">Pending</span>
-              </td>
-              <td>
-                <span
-                  class="priority-badge high"
-                  onclick="alert('Filtering by High priority')"
-                  >High</span
-                >
-              </td>
-              <td>
-                <div class="action-btns">
-                  <a href="{% url 'studentview' %}" class="action-btn view-btn">
-                    <i class="fas fa-eye"></i>
-                    <span>View</span>
-                  </a>
-                </div>
-              </td>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ submission.assignment.title }}</td>
+                <td>{{ submission.assignment.subject }}</td>
+                <td>
+                    <span class="faculty-name">{{ submission.faculty_name }}</span>
+                </td>
+                <td>
+                    {% if submission.grade_status == 'graded' %}
+                        {{ submission.grade }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>{{ submission.assignment.deadline|date:"M d, Y" }}</td>
+                <td>
+                    <span class="status-badge 
+                        {% if submission.status == 'submitted' %}submitted
+                        {% elif submission.status == 'graded' %}graded
+                        {% else %}pending{% endif %}">
+                        {{ submission.status }}
+                    </span>
+                </td>
+                <td>
+                    <span class="priority-badge {{ submission.priority|lower }}">
+                        {{ submission.priority }}
+                    </span>
+                </td>
+                <td>
+                    <div class="action-btns">
+                        <a href="{% url 'student_assignment_detail' submission.id %}" class="action-btn view-btn">
+                            <i class="fas fa-eye"></i>
+                            <span>View</span>
+                        </a>
+                    </div>
+                </td>
             </tr>
+            {% empty %}
             <tr>
-              <td>2</td>
-              <td>Chemical Bonding Report</td>
-              <td>Science</td>
-              <td>
-                <span class="faculty-name">Dr. Johnson</span>
-              </td>
-              <td>B+</td>
-              <td>May 10, 2023</td>
-              <td>
-                <span class="status-badge graded">Graded</span>
-              </td>
-              <td>
-                <span
-                  class="priority-badge medium"
-                  onclick="alert('Filtering by Medium priority')"
-                  >Medium</span
-                >
-              </td>
-              <td>
-                <div class="action-btns">
-                  <a href="{% url 'studentview' %}" class="action-btn view-btn">
-                    <i class="fas fa-eye"></i>
-                    <span>View</span>
-                  </a>
-                </div>
-              </td>
+                <td colspan="9">No assignments found.</td>
             </tr>
-            <tr>
-              <td>3</td>
-              <td>Shakespeare Essay</td>
-              <td>English</td>
-              <td>
-                <span class="faculty-name">Prof. Williams</span>
-              </td>
-              <td>A-</td>
-              <td>May 5, 2023</td>
-              <td>
-                <span class="status-badge graded">Graded</span>
-              </td>
-              <td>
-                <span
-                  class="priority-badge low"
-                  onclick="alert('Filtering by Low priority')"
-                  >Low</span
-                >
-              </td>
-              <td>
-                <div class="action-btns">
-                  <a href="{% url 'studentview' %}" class="action-btn view-btn">
-                    <i class="fas fa-eye"></i>
-                    <span>View</span>
-                  </a>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>4</td>
-              <td>World War II Presentation</td>
-              <td>History</td>
-              <td>
-                <span class="faculty-name">Dr. Brown</span>
-              </td>
-              <td>-</td>
-              <td>May 20, 2023</td>
-              <td>
-                <span class="status-badge submitted">Submitted</span>
-              </td>
-              <td>
-                <span
-                  class="priority-badge medium"
-                  onclick="alert('Filtering by Medium priority')"
-                  >Medium</span
-                >
-              </td>
-              <td>
-                <div class="action-btns">
-                  <a href="{% url 'studentview' %}" class="action-btn view-btn">
-                    <i class="fas fa-eye"></i>
-                    <span>View</span>
-                  </a>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>5</td>
-              <td>Database Design Project</td>
-              <td>Computer Science</td>
-              <td>
-                <span class="faculty-name">Prof. Davis</span>
-              </td>
-              <td>-</td>
-              <td>May 25, 2023</td>
-              <td>
-                <span class="status-badge pending">Pending</span>
-              </td>
-              <td>
-                <span
-                  class="priority-badge high"
-                  onclick="alert('Filtering by High priority')"
-                  >High</span
-                >
-              </td>
-              <td>
-                <div class="action-btns">
-                  <a href="{% url 'studentview' %}" class="action-btn view-btn">
-                    <i class="fas fa-eye"></i>
-                    <span>View</span>
-                  </a>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>6</td>
-              <td>Organic Chemistry Lab Report</td>
-              <td>Chemistry</td>
-              <td>
-                <span class="faculty-name">Dr. Wilson</span>
-              </td>
-              <td>C</td>
-              <td>May 8, 2023</td>
-              <td>
-                <span class="status-badge graded">Graded</span>
-              </td>
-              <td>
-                <span
-                  class="priority-badge medium"
-                  onclick="alert('Filtering by Medium priority')"
-                  >Medium</span
-                >
-              </td>
-              <td>
-                <div class="action-btns">
-                  <a href="{% url 'studentview' %}" class="action-btn view-btn">
-                    <i class="fas fa-eye"></i>
-                    <span>View</span>
-                  </a>
-                </div>
-              </td>
-            </tr>
-          </tbody>
+            {% endfor %}
+        </tbody>
         </table>
       </div>
     </div>

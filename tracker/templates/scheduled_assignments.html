@@ -1,0 +1,85 @@
+{% extends 'faculty.html' %}
+
+{% block content %}
+<div class="assignments-container">
+    <h1>Scheduled Assignments</h1>
+    
+    <table class="assignments-table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Subject</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for assignment in assignments %}
+            <tr>
+                <td>{{ assignment.title }}</td>
+                <td>{{ assignment.description|truncatechars:50 }}</td>
+                <td>{{ assignment.subject }}</td>
+                <td>
+                    <a href="{% url 'faculty_assignment_detail' assignment.id %}" class="btn-view">
+                        View
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">No assignments found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<style>
+    .assignments-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+    
+    .assignments-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: rgba(255, 255, 255, 0.85);
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+    
+    .assignments-table th, .assignments-table td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .assignments-table th {
+        background: linear-gradient(135deg, var(--lavender), rgba(209, 196, 233, 0.8));
+        color: var(--text-dark);
+        font-weight: 500;
+    }
+    
+    .assignments-table tr:hover td {
+        background: rgba(255, 255, 255, 0.5);
+    }
+    
+    .btn-view {
+        padding: 0.5rem 1rem;
+        background: var(--soft-blue);
+        color: #0277bd;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-view:hover {
+        background: #81d4fa;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment Detail</title>
+    <style>
+        .assignment-detail-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .assignment-resources, .submitted-files {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 5px;
+        }
+        .download-btn {
+            display: inline-block;
+            padding: 8px 15px;
+            background: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        .submission-form {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+        .submit-btn {
+            padding: 10px 20px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .alert {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .alert-success {
+            background: #dff0d8;
+            color: #3c763d;
+        }
+        .alert-error {
+            background: #f2dede;
+            color: #a94442;
+        }
+        .file-info {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="assignment-detail-container">
+        <h2>{{ assignment.title }}</h2>
+        <p><strong>Subject:</strong> {{ assignment.subject }}</p>
+        <p><strong>Description:</strong> {{ assignment.description }}</p>
+        <p><strong>Deadline:</strong> {{ assignment.deadline|date:"M d, Y H:i" }}</p>
+        
+        <!-- Teacher's PDF resource -->
+        <div class="assignment-resources">
+            <h3>Assignment Resources</h3>
+            {% if assignment.upload_pdf %}
+                <a href="{{ assignment.upload_pdf.url }}" class="download-btn" download>
+                    Download Assignment PDF
+                </a>
+            {% else %}
+                <p>No resources provided by teacher</p>
+            {% endif %}
+        </div>
+
+        <!-- Student's submitted work -->
+        {% if submission.status == 'submitted' %}
+        <div class="submitted-files">
+            <h3>Your Submission</h3>
+            <p><strong>Submitted on:</strong> {{ submission.submission_time|date:"M d, Y H:i" }}</p>
+            <p><strong>Status:</strong> {{ submission.get_status_display }}</p>
+            
+            {% if submission.submitted_pdf %}
+            <div class="file-info">
+                <strong>PDF Report:</strong> 
+                <a href="{{ submission.submitted_pdf.url }}" class="download-btn" download>Download</a>
+            </div>
+            {% endif %}
+            
+            {% if submission.submitted_video %}
+            <div class="file-info">
+                <strong>Video Demonstration:</strong> 
+                <a href="{{ submission.submitted_video.url }}" class="download-btn" download>Download</a>
+            </div>
+            {% endif %}
+            
+            {% if submission.submitted_zip %}
+            <div class="file-info">
+                <strong>Source Code (ZIP):</strong> 
+                <a href="{{ submission.submitted_zip.url }}" class="download-btn" download>Download</a>
+            </div>
+            {% endif %}
+        </div>
+        {% else %}
+        <!-- Submission form -->
+        <div class="submission-form">
+            <h3>Submit Your Work</h3>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="submit-btn">Submit Assignment</button>
+            </form>
+        </div>
+        {% endif %}
+        
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

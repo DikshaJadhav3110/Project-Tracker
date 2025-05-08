@@ -1,9 +1,11 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User, Group
-from .forms import AssignmentForm # type: ignore
+from .forms import AssignmentForm, AssignmentSubmissionForm # type: ignore
 from .models import Assignment, AssignmentSubmission
 from django.contrib import messages
+from django.contrib.auth import logout
+from django.utils import timezone  # Add this import
 
 
 @login_required
@@ -11,7 +13,12 @@ def dashboard(request):
     user = request.user
 
     if user.groups.filter(name='Student').exists():
-        return render(request, 'student.html')
+        submissions = AssignmentSubmission.objects.filter(student=request.user).select_related('assignment')
+        context = {
+        'submissions': submissions,
+        'student_name': request.user.get_full_name() or request.user.username
+        }
+        return render(request, 'student.html', context)
 
     elif user.groups.filter(name='Faculty').exists():
         return render(request, 'faculty.html')
@@ -30,41 +37,57 @@ def all_assignments(request):
 
 
 def studentview(request):
-    assignments = [
-        {
-            "title": "Math Assignment 1",
-            "subject": "Mathematics",
-            "description": "Solve all questions from chapter 2.",
-            "priority": "High",
-            "deadline": "2025-05-10 23:59",
-            "pdf_url": "https://example.com/sample.pdf",
-        },
-        {
-            "title": "Science Project",
-            "subject": "Science",
-            "description": "Prepare a model of the solar system.",
-            "priority": "Medium",
-            "deadline": "2025-05-12 18:00",
-            "pdf_url": "https://example.com/sample2.pdf",
-        },
-    ]
-    return render(request, 'studentview.html', {"assignments": assignments})
+    # assignments = [
+    #     {
+    #         "title": "Math Assignment 1",
+    #         "subject": "Mathematics",
+    #         "description": "Solve all questions from chapter 2.",
+    #         "priority": "High",
+    #         "deadline": "2025-05-10 23:59",
+    #         "pdf_url": "https://example.com/sample.pdf",
+    #     },
+    #     {
+    #         "title": "Science Project",
+    #         "subject": "Science",
+    #         "description": "Prepare a model of the solar system.",
+    #         "priority": "Medium",
+    #         "deadline": "2025-05-12 18:00",
+    #         "pdf_url": "https://example.com/sample2.pdf",
+    #     },
+    # ]
+    # return render(request, 'studentview.html', {"assignments": assignments})
+    pass
 
 
-def assignment_detail(request, assignment_id):
-    assignments = {
-        1: {
-            "title": "Math Assignment 1",
-            "subject": "Mathematics",
-            "description": "Solve all questions from chapter 2.",
-            "priority": "High",
-            "deadline": "2025-05-10 23:59",
-            "pdf_url": "https://example.com/sample.pdf",
-        },
-        # Add more assignments
+
+@login_required
+def student_assignment_detail(request, submission_id):
+    submission = get_object_or_404(AssignmentSubmission, id=submission_id, student=request.user)
+    
+    if request.method == 'POST':
+        form = AssignmentSubmissionForm(request.POST, request.FILES, instance=submission)
+        if form.is_valid():
+            # Update submission fields
+            submission = form.save(commit=False)
+            submission.status = 'submitted'
+            submission.grade_status = 'pending'
+            submission.submission_time = timezone.now()
+            submission.save()
+            
+            # messages.success(request, 'Assignment submitted successfully!')
+            return redirect('student_dashboard')  # Make sure this URL name matches your URLs
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = AssignmentSubmissionForm(instance=submission)
+    
+    context = {
+        'assignment': submission.assignment,
+        'submission': submission,
+        'form': form,
+        'student_name': request.user.get_full_name() or request.user.username
     }
-    assignment = assignments.get(assignment_id)
-    return render(request, 'tracker/assignment_detail.html', {"assignment": assignment})
+    return render(request, 'student_assignment_detail.html', context)
 
 
 
@@ -108,3 +131,61 @@ def add_assignment(request):
 
 def faculty_home(request):
     return render(request, 'faculty.html')
+
+
+@login_required
+def student_dashboard(request):
+    # Get all submissions for the current student
+    submissions = AssignmentSubmission.objects.filter(student=request.user).select_related('assignment')
+    
+    context = {
+        'submissions': submissions,
+        'student_name': request.user.get_full_name() or request.user.username
+    }
+    return render(request, 'student.html', context)
+
+
+
+
+
+
+
+@login_required
+def scheduled_assignments(request):
+    # Get assignments for the logged-in faculty
+    assignments = Assignment.objects.filter(faculty=request.user)
+    context = {
+        'assignments': assignments,
+        'faculty_name': request.user.first_name
+    }
+    return render(request, 'scheduled_assignments.html', context)
+
+@login_required
+def faculty_assignment_detail(request, assignment_id):
+    # Get specific assignment
+    assignment = get_object_or_404(Assignment, id=assignment_id, faculty=request.user)
+    
+    # Get submissions for this assignment
+    submissions = AssignmentSubmission.objects.filter(assignment=assignment)
+    
+    context = {
+        'assignment': assignment,
+        'submissions': submissions,
+        'faculty_name': request.user.first_name
+    }
+    return render(request, 'assignment_detail.html', context)
+
+@login_required
+def submission_detail(request, submission_id):
+    # Get specific submission
+    submission = get_object_or_404(AssignmentSubmission, id=submission_id)
+    
+    context = {
+        'submission': submission,
+        'faculty_name': request.user.first_name
+    }
+    return render(request, 'submission_detail.html', context)
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')  # Assuming you have a login URL named 'login'

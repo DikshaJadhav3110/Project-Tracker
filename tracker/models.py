@@ -60,3 +60,4 @@ class AssignmentSubmission(models.Model):
 
     def __str__(self):
         return f"{self.assignment.title} - {self.student.username}"  # Remove .user
+

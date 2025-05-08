@@ -1,0 +1,67 @@
+{% extends 'faculty.html' %}
+
+{% block content %}
+<div class="submission-detail-container">
+    <h1>Submission Details</h1>
+    
+    <div class="submission-info">
+        <h2>{{ submission.assignment.title }}</h2>
+        <p><strong>Student:</strong> {{ submission.student_name }}</p>
+        <p><strong>Status:</strong> {{ submission.status }}</p>
+        <p><strong>Grade Status:</strong> {{ submission.grade_status }}</p>
+        <p><strong>Grade:</strong> {{ submission.grade }}</p>
+        
+        {% if submission.status == 'submitted' %}
+            <div class="submitted-files">
+                <h3>Submitted Files:</h3>
+                {% if submission.submitted_pdf %}
+                <p><strong>PDF:</strong> <a href="{{ submission.submitted_pdf.url }}" download>Download</a></p>
+                {% endif %}
+                
+                {% if submission.submitted_video %}
+                <p><strong>Video:</strong> 
+                    <video width="320" height="240" controls>
+                        <source src="{{ submission.submitted_video.url }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </p>
+                {% endif %}
+                
+                {% if submission.submitted_zip %}
+                <p><strong>Zip File:</strong> <a href="{{ submission.submitted_zip.url }}" download>Download</a></p>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="not-submitted">
+                <p>This student has not submitted the assignment yet.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .submission-detail-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+    
+    .submission-info {
+        background: rgba(255, 255, 255, 0.85);
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+    
+    .submitted-files {
+        margin-top: 2rem;
+    }
+    
+    video {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin-top: 1rem;
+    }
+</style>
+{% endblock %}
