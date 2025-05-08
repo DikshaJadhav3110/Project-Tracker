@@ -13,7 +13,78 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
     />
     <link rel="stylesheet" href="{% static '/style.css' %}" />
-    <!-- Link to CSS -->
+    <style>
+      /* Add these styles to your CSS file */
+      .upload-section {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        margin-top: 1rem;
+      }
+      
+      .upload-area {
+        border: 2px dashed #b3e5fc;
+        border-radius: 10px;
+        padding: 2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.7);
+      }
+      
+      .upload-area:hover {
+        background: rgba(179, 229, 252, 0.2);
+        border-color: #0288d1;
+      }
+      
+      .upload-icon {
+        font-size: 2.5rem;
+        color: #0288d1;
+        margin-bottom: 1rem;
+      }
+      
+      .upload-text h3 {
+        margin: 0;
+        color: #455a64;
+      }
+      
+      .upload-text p {
+        margin: 0.5rem 0 0;
+        color: #78909c;
+      }
+      
+      .file-input {
+        display: none;
+      }
+      
+      .file-info {
+        display: none;
+        align-items: center;
+        background: #e3f2fd;
+        padding: 0.8rem 1rem;
+        border-radius: 8px;
+        margin-top: 1rem;
+      }
+      
+      .file-info i {
+        color: #d32f2f;
+        margin-right: 0.8rem;
+      }
+      
+      .remove-btn {
+        background: none;
+        border: none;
+        color: #d32f2f;
+        cursor: pointer;
+        margin-left: auto;
+      }
+      
+      .upload-type-title {
+        font-weight: 500;
+        color: #455a64;
+        margin-bottom: 0.5rem;
+      }
+    </style>
   </head>
   <body>
     <!-- Decorative floating circles -->
@@ -24,11 +95,6 @@
       <!-- Header -->
       <header class="header">
         <div class="logo"><i class="fas fa-book"></i> Assignment Dashboard</div>
-        <nav class="nav-items">
-          <!-- <a href="#" class="nav-item"><i class="fas fa-home"></i>Home</a> -->
-          <a href="#" class="nav-item"
-            ><i class="fas fa-tasks"></i>My Assignments</a
-          >
           <a href="#" class="logout-btn"
             ><i class="fas fa-sign-out-alt"></i>Logout</a
           >
@@ -73,9 +139,6 @@
               <a href="assignment-details.pdf" class="btn btn-primary" download
                 ><i class="fas fa-file-pdf"></i>Download PDF</a
               >
-              <a href="#" class="btn btn-secondary"
-                ><i class="fas fa-eye"></i>Preview</a
-              >
             </div>
 
             <div class="section-title">
@@ -83,25 +146,79 @@
             </div>
 
             <div class="upload-section">
-              <div class="upload-area" id="uploadArea">
-                <i class="fas fa-cloud-upload-alt upload-icon"></i>
-                <div class="upload-text">
-                  <h3>Upload your work</h3>
-                  <p>Click to browse or drag and drop PDF file</p>
+              <!-- Video Upload -->
+              <div>
+                <div class="upload-type-title">1. Upload Video Demonstration</div>
+                <div class="upload-area" id="videoUploadArea">
+                  <i class="fas fa-video upload-icon"></i>
+                  <div class="upload-text">
+                    <h3>Upload Video File</h3>
+                    <p>Click to browse or drag and drop MP4 file</p>
+                  </div>
+                  <input
+                    type="file"
+                    id="videoInput"
+                    class="file-input"
+                    accept=".mp4,.mov,.avi"
+                  />
                 </div>
-                <input
-                  type="file"
-                  id="fileInput"
-                  class="file-input"
-                  accept=".pdf"
-                />
+                <div class="file-info" id="videoFileInfo">
+                  <i class="fas fa-file-video"></i>
+                  <span id="videoFileName">No file selected</span>
+                  <button id="removeVideoFile" class="remove-btn">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
               </div>
-              <div class="file-info" id="fileInfo">
-                <i class="fas fa-file-pdf"></i>
-                <span id="fileName">No file selected</span>
-                <button id="removeFile" class="remove-btn">
-                  <i class="fas fa-times"></i>
-                </button>
+
+              <!-- Zip/Folder Upload -->
+              <div>
+                <div class="upload-type-title">2. Upload Source Code (ZIP)</div>
+                <div class="upload-area" id="zipUploadArea">
+                  <i class="fas fa-file-archive upload-icon"></i>
+                  <div class="upload-text">
+                    <h3>Upload ZIP Folder</h3>
+                    <p>Click to browse or drag and drop ZIP file</p>
+                  </div>
+                  <input
+                    type="file"
+                    id="zipInput"
+                    class="file-input"
+                    accept=".zip,.rar,.7z"
+                  />
+                </div>
+                <div class="file-info" id="zipFileInfo">
+                  <i class="fas fa-file-archive"></i>
+                  <span id="zipFileName">No file selected</span>
+                  <button id="removeZipFile" class="remove-btn">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- PDF Upload -->
+              <div>
+                <div class="upload-type-title">3. Upload Report (PDF)</div>
+                <div class="upload-area" id="pdfUploadArea">
+                  <i class="fas fa-file-pdf upload-icon"></i>
+                  <div class="upload-text">
+                    <h3>Upload PDF Report</h3>
+                    <p>Click to browse or drag and drop PDF file</p>
+                  </div>
+                  <input
+                    type="file"
+                    id="pdfInput"
+                    class="file-input"
+                    accept=".pdf"
+                  />
+                </div>
+                <div class="file-info" id="pdfFileInfo">
+                  <i class="fas fa-file-pdf"></i>
+                  <span id="pdfFileName">No file selected</span>
+                  <button id="removePdfFile" class="remove-btn">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -116,14 +233,55 @@
     </div>
 
     <script>
-      function showFileName(event) {
-        const fileInput = event.target;
-        const fileInfo = document.getElementById("file-info");
-        const fileNameSpan = document.getElementById("file-name");
-        if (fileInput.files.length > 0) {
-          fileInfo.style.display = "flex";
-          fileNameSpan.textContent = fileInput.files[0].name;
-        }
+      // Setup for video upload
+      setupFileUpload('videoInput', 'videoFileInfo', 'videoFileName', 'removeVideoFile');
+      // Setup for zip upload
+      setupFileUpload('zipInput', 'zipFileInfo', 'zipFileName', 'removeZipFile');
+      // Setup for pdf upload
+      setupFileUpload('pdfInput', 'pdfFileInfo', 'pdfFileName', 'removePdfFile');
+
+      function setupFileUpload(inputId, infoId, fileNameId, removeBtnId) {
+        const fileInput = document.getElementById(inputId);
+        const fileInfo = document.getElementById(infoId);
+        const fileNameSpan = document.getElementById(fileNameId);
+        const removeBtn = document.getElementById(removeBtnId);
+        const uploadArea = document.getElementById(inputId.replace('Input', 'UploadArea'));
+
+        fileInput.addEventListener('change', function(event) {
+          if (fileInput.files.length > 0) {
+            fileInfo.style.display = "flex";
+            fileNameSpan.textContent = fileInput.files[0].name;
+          }
+        });
+
+        removeBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          fileInput.value = '';
+          fileInfo.style.display = "none";
+        });
+
+        uploadArea.addEventListener('click', function() {
+          fileInput.click();
+        });
+
+        uploadArea.addEventListener('dragover', function(e) {
+          e.preventDefault();
+          uploadArea.style.background = "rgba(179, 229, 252, 0.3)";
+        });
+
+        uploadArea.addEventListener('dragleave', function() {
+          uploadArea.style.background = "rgba(255, 255, 255, 0.7)";
+        });
+
+        uploadArea.addEventListener('drop', function(e) {
+          e.preventDefault();
+          uploadArea.style.background = "rgba(255, 255, 255, 0.7)";
+          if (e.dataTransfer.files.length) {
+            fileInput.files = e.dataTransfer.files;
+            fileInfo.style.display = "flex";
+            fileNameSpan.textContent = fileInput.files[0].name;
+          }
+        });
       }
     </script>
   </body>

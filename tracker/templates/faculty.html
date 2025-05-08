@@ -218,7 +218,7 @@
 
     <div class="dashboard-container">
       <!-- Welcome Message -->
-      <h1>Welcome, {{ faculty_name }}</h1>
+      <h1>Welcome {{ faculty_name }}</h1>
 
       <!-- Cards Section -->
       <div class="cards-container">
@@ -243,18 +243,6 @@
           </p>
           <button onclick="location.href='/scheduled-assignments'">
             View Scheduled
-          </button>
-        </div>
-
-        <!-- Card 3: Saved as Draft -->
-        <div class="card">
-          <h2>Saved as Draft</h2>
-          <p>
-            Continue working on assignments you've saved as drafts. Perfect for
-            works-in-progress.
-          </p>
-          <button onclick="location.href='/draft-assignments'">
-            View Drafts
           </button>
         </div>
       </div>

@@ -1,0 +1,243 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Assignment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --sunshine-yellow: #fff9c4;
+            --soft-blue: #b3e5fc;
+            --bubblegum-pink: #ffcdd2;
+            --peach-orange: #ffccbc;
+            --lavender: #d1c4e9;
+            --text-dark: #455a64;
+            --text-light: #ffffff;
+            --high-priority: #ff8a80;
+            --medium-priority: #ffd180;
+            --low-priority: #ccff90;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        body {
+            background-color: #fafafa;
+            background-image: radial-gradient(
+                circle at 10% 20%,
+                var(--sunshine-yellow) 0%,
+                var(--lavender) 90%
+            );
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        h2 {
+            color: var(--text-dark);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            font-size: 1.8rem;
+            position: relative;
+        }
+
+        h2::after {
+            content: "";
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--peach-orange), var(--soft-blue));
+            border-radius: 2px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.7);
+            transition: all 0.3s ease;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--soft-blue);
+            box-shadow: 0 0 0 3px rgba(179, 229, 252, 0.3);
+            outline: none;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-submit {
+            background-color: var(--soft-blue);
+            color: #0277bd;
+        }
+
+        .btn-cancel {
+            background-color: var(--bubblegum-pink);
+            color: #c2185b;
+        }
+
+        input[type="file"] {
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px dashed rgba(0, 0, 0, 0.2);
+        }
+
+        input[type="datetime-local"] {
+            padding: 0.7rem;
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 1em;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 1.5rem;
+                width: 95%;
+            }
+            
+            .buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Decorative floating circles -->
+    <div class="floating circle-1"></div>
+    <div class="floating circle-2"></div>
+
+    <div class="form-container">
+        <h2>Add New Assignment</h2>
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}{{ message }}{% endfor %}
+        </div>
+        {% endif %}
+        
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <!-- Subject Field -->
+            <div class="form-group">
+                <label for="id_subject">Subject</label>
+                {{ form.subject }}
+            </div>
+            
+            <!-- Title Field -->
+            <div class="form-group">
+                <label for="id_title">Title</label>
+                {{ form.title }}
+            </div>
+            
+            <!-- Description Field -->
+            <div class="form-group">
+                <label for="id_description">Description</label>
+                {{ form.description }}
+            </div>
+            
+            <!-- Possible Grades Field -->
+            <div class="form-group">
+                <label for="id_possible_grades">Possible Grades</label>
+                {{ form.possible_grades }}
+            </div>
+            
+            <!-- PDF Upload Field -->
+            <div class="form-group">
+                <label for="id_upload_pdf">Assignment PDF</label>
+                {{ form.upload_pdf }}
+            </div>
+            
+            <!-- Deadline Field -->
+            <div class="form-group">
+                <label for="id_deadline">Deadline</label>
+                {{ form.deadline }}
+            </div>
+            
+            <div class="buttons">
+                <button type="button" class="btn btn-cancel" onclick="window.location.href='/'">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button type="submit" class="btn btn-submit">
+                    <i class="fas fa-paper-plane"></i> Submit Assignment
+                </button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

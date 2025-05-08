@@ -2,29 +2,15 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 
-# Student model (linked to auth User)
-class Student(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    student_id = models.AutoField(primary_key=True)
-
-    def __str__(self):
-        return self.user.username
-
-# Faculty model (linked to auth User)
-class Faculty(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    faculty_id = models.AutoField(primary_key=True)
-
-    def __str__(self):
-        return self.user.username
 
 # Assignment created by faculty
 class Assignment(models.Model):
-    faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE, related_name='assignments')
-    subject = models.CharField(max_length=100)
+    faculty = models.ForeignKey(User, on_delete=models.CASCADE, related_name='assignments')
+    faculty_name = models.CharField(max_length=150, default='0')
     title = models.CharField(max_length=200)
     description = models.TextField()
-    possible_grades = models.CharField(max_length=100)
+    subject = models.CharField(max_length=100, default='')
+    possible_grades = models.IntegerField()
     upload_pdf = models.FileField(upload_to='assignments/')
     deadline = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -53,10 +39,15 @@ class AssignmentSubmission(models.Model):
     ]
 
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE, related_name='submissions')
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='submissions')
-    faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE, related_name='graded_submissions')
+    student = models.ForeignKey(User, on_delete=models.CASCADE)
+    student_name = models.CharField(max_length=150, default='0')
+    faculty = models.ForeignKey(User, on_delete=models.CASCADE, related_name='submissions')
+    faculty_name = models.CharField(max_length=150, default='0')
+
 
     submitted_pdf = models.FileField(upload_to='submissions/', null=True, blank=True)
+    submitted_video = models.FileField(upload_to='submissions/videos/', null=True, blank=True)
+    submitted_zip = models.FileField(upload_to='submissions/zips/', null=True, blank=True)
     submission_time = models.DateTimeField(null=True, blank=True)
 
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='not submitted')
@@ -68,4 +59,4 @@ class AssignmentSubmission(models.Model):
     missed = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.assignment.title} - {self.student.user.username}"
+        return f"{self.assignment.title} - {self.student.username}"  # Remove .user

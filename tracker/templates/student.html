@@ -195,19 +195,26 @@
         transform: translateY(-2px);
       }
 
+      /* Table Container */
+      .table-container {
+        max-height: 500px;
+        overflow-y: auto;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(10px);
+      }
+
       /* Table Styles */
       .assignments-table {
         width: 100%;
         border-collapse: separate;
         border-spacing: 0;
-        background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(10px);
-        border-radius: 15px;
-        overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
       }
 
       .assignments-table th {
+        position: sticky;
+        top: 0;
         background: linear-gradient(
           135deg,
           var(--lavender),
@@ -217,6 +224,7 @@
         padding: 1.2rem;
         text-align: left;
         font-weight: 500;
+        z-index: 10;
       }
 
       .assignments-table td {
@@ -265,6 +273,30 @@
         color: #33691e;
       }
 
+      /* Status Badges */
+      .status-badge {
+        padding: 0.3rem 0.8rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        display: inline-block;
+      }
+
+      .graded {
+        background: #c8e6c9;
+        color: #256029;
+      }
+
+      .submitted {
+        background: #b3e5fc;
+        color: #23547b;
+      }
+
+      .pending {
+        background: #ffecb3;
+        color: #8a5340;
+      }
+
       /* Action Buttons */
       .action-btns {
         display: flex;
@@ -295,27 +327,10 @@
         color: #0277bd;
       }
 
-      .hide-btn {
-        background: var(--bubblegum-pink);
-        color: #c2185b;
-      }
-
-      .action-btn i {
-        margin-right: 0.3rem;
-        font-size: 0.8rem;
-      }
-
-      /* Faculty Link */
-      .faculty-link {
-        color: #5e35b1;
-        text-decoration: none;
+      /* Faculty Name */
+      .faculty-name {
+        color: var(--text-dark);
         font-weight: 500;
-        transition: all 0.3s ease;
-      }
-
-      .faculty-link:hover {
-        text-decoration: underline;
-        color: #4527a0;
       }
 
       /* Floating decorative elements */
@@ -354,6 +369,26 @@
         }
       }
 
+      /* Scrollbar styling */
+      .table-container::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      .table-container::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 10px;
+      }
+
+      .table-container::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+      }
+
+      .table-container::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 0, 0, 0.3);
+      }
+
       /* Responsive adjustments */
       @media (max-width: 768px) {
         .header {
@@ -366,8 +401,7 @@
           justify-content: space-between;
         }
 
-        .assignments-table {
-          display: block;
+        .table-container {
           overflow-x: auto;
         }
       }
@@ -390,14 +424,6 @@
             <i class="fas fa-envelope"></i>
             <span>Messages</span>
           </a>
-          <a
-            href="{% url 'all_assignments' %}"
-            class="nav-item"
-            onclick="alert('All Assignments clicked!')"
-          >
-            <i class="fas fa-tasks"></i>
-            <span>All Assignments</span>
-          </a>
           <a href="#" class="logout-btn" onclick="alert('Logout clicked!')">
             <i class="fas fa-sign-out-alt"></i>
             <span>Logout</span>
@@ -410,15 +436,6 @@
 
       <!-- Filter Section -->
       <div class="filter-section">
-        <label for="subject-filter">Subject:</label>
-        <select id="subject-filter">
-          <option value="all">All Subjects</option>
-          <option value="math">Mathematics</option>
-          <option value="science">Science</option>
-          <option value="english">English</option>
-          <option value="history">History</option>
-        </select>
-
         <label for="priority-filter">Priority:</label>
         <select id="priority-filter">
           <option value="all">All Priorities</option>
@@ -441,174 +458,202 @@
         </button>
       </div>
 
-      <!-- Assignments Table -->
-      <table class="assignments-table">
-        <thead>
-          <tr>
-            <th>Sr. No.</th>
-            <th>Assignment Name</th>
-            <th>Subject</th>
-            <th>Faculty</th>
-            <th>Grade</th>
-            <th>Deadline</th>
-            <th>Priority</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>1</td>
-            <td>Linear Algebra Problems</td>
-            <td>Mathematics</td>
-            <td>
-              <a
-                href="#"
-                class="faculty-link"
-                onclick="alert('Viewing Prof. Smith profile')"
-                >Prof. Smith</a
-              >
-            </td>
-            <td>-</td>
-            <td>May 15, 2023</td>
-            <td>
-              <span
-                class="priority-badge high"
-                onclick="alert('Filtering by High priority')"
-                >High</span
-              >
-            </td>
-            <td>
-              <div class="action-btns">
-                <a href="{% url 'studentview' %}" class="action-btn view-btn">
-                  <i class="fas fa-eye"></i>
-                  <span>View</span>
-                </a>
-                <a
-                  href="% url 'student_view' %"
-                  class="action-btn hide-btn"
-                  onclick="alert('Hiding assignment')"
+      <!-- Assignments Table Container -->
+      <div class="table-container">
+        <!-- Assignments Table -->
+        <table class="assignments-table">
+          <thead>
+            <tr>
+              <th>Sr. No.</th>
+              <th>Assignment Name</th>
+              <th>Subject</th>
+              <th>Faculty</th>
+              <th>Grade</th>
+              <th>Deadline</th>
+              <th>Status</th>
+              <th>Priority</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Linear Algebra Problems</td>
+              <td>Mathematics</td>
+              <td>
+                <span class="faculty-name">Prof. Smith</span>
+              </td>
+              <td>-</td>
+              <td>May 15, 2023</td>
+              <td>
+                <span class="status-badge pending">Pending</span>
+              </td>
+              <td>
+                <span
+                  class="priority-badge high"
+                  onclick="alert('Filtering by High priority')"
+                  >High</span
                 >
-                  <i class="fas fa-eye-slash"></i>
-                  <span>Hide</span>
-                </a>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>Chemical Bonding Report</td>
-            <td>Science</td>
-            <td>
-              <a
-                href="#"
-                class="faculty-link"
-                onclick="alert('Viewing Dr. Johnson profile')"
-                >Dr. Johnson</a
-              >
-            </td>
-            <td>B+</td>
-            <td>May 10, 2023</td>
-            <td>
-              <span
-                class="priority-badge medium"
-                onclick="alert('Filtering by Medium priority')"
-                >Medium</span
-              >
-            </td>
-            <td>
-              <div class="action-btns">
-                <a href="{% url 'studentview' %}" class="action-btn view-btn">
-                  <i class="fas fa-eye"></i>
-                  <span>View</span>
-                </a>
-                <a href="% url 'student_view' %" class="action-btn hide-btn">
-                  <i class="fas fa-eye-slash"></i>
-                  <span>Hide</span>
-                </a>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td>3</td>
-            <td>Shakespeare Essay</td>
-            <td>English</td>
-            <td>
-              <a
-                href="#"
-                class="faculty-link"
-                onclick="alert('Viewing Prof. Williams profile')"
-                >Prof. Williams</a
-              >
-            </td>
-            <td>A-</td>
-            <td>May 5, 2023</td>
-            <td>
-              <span
-                class="priority-badge low"
-                onclick="alert('Filtering by Low priority')"
-                >Low</span
-              >
-            </td>
-            <td>
-              <div class="action-btns">
-                <a href="{% url 'studentview' %}" class="action-btn view-btn">
-                  <i class="fas fa-eye"></i>
-                  <span>View</span>
-                </a>
-                <a href="% url 'student_view' %" class="action-btn hide-btn">
-                  <i class="fas fa-eye-slash"></i>
-                  <span>Hide</span>
-                </a>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td>4</td>
-            <td>World War II Presentation</td>
-            <td>History</td>
-            <td>
-              <a
-                href="#"
-                class="faculty-link"
-                onclick="alert('Viewing Dr. Brown profile')"
-                >Dr. Brown</a
-              >
-            </td>
-            <td>-</td>
-            <td>May 20, 2023</td>
-            <td>
-              <span
-                class="priority-badge medium"
-                onclick="alert('Filtering by Medium priority')"
-                >Medium</span
-              >
-            </td>
-            <td>
-              <div class="action-btns">
-                <a href="{% url 'studentview' %}" class="action-btn view-btn">
-                  <i class="fas fa-eye"></i>
-                  <span>View</span>
-                </a>
-                <a
-                  href="#"
-                  class="action-btn hide-btn"
-                  onclick="alert('Hiding assignment')"
+              </td>
+              <td>
+                <div class="action-btns">
+                  <a href="{% url 'studentview' %}" class="action-btn view-btn">
+                    <i class="fas fa-eye"></i>
+                    <span>View</span>
+                  </a>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Chemical Bonding Report</td>
+              <td>Science</td>
+              <td>
+                <span class="faculty-name">Dr. Johnson</span>
+              </td>
+              <td>B+</td>
+              <td>May 10, 2023</td>
+              <td>
+                <span class="status-badge graded">Graded</span>
+              </td>
+              <td>
+                <span
+                  class="priority-badge medium"
+                  onclick="alert('Filtering by Medium priority')"
+                  >Medium</span
                 >
-                  <i class="fas fa-eye-slash"></i>
-                  <span>Hide</span>
-                </a>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+              </td>
+              <td>
+                <div class="action-btns">
+                  <a href="{% url 'studentview' %}" class="action-btn view-btn">
+                    <i class="fas fa-eye"></i>
+                    <span>View</span>
+                  </a>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Shakespeare Essay</td>
+              <td>English</td>
+              <td>
+                <span class="faculty-name">Prof. Williams</span>
+              </td>
+              <td>A-</td>
+              <td>May 5, 2023</td>
+              <td>
+                <span class="status-badge graded">Graded</span>
+              </td>
+              <td>
+                <span
+                  class="priority-badge low"
+                  onclick="alert('Filtering by Low priority')"
+                  >Low</span
+                >
+              </td>
+              <td>
+                <div class="action-btns">
+                  <a href="{% url 'studentview' %}" class="action-btn view-btn">
+                    <i class="fas fa-eye"></i>
+                    <span>View</span>
+                  </a>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>World War II Presentation</td>
+              <td>History</td>
+              <td>
+                <span class="faculty-name">Dr. Brown</span>
+              </td>
+              <td>-</td>
+              <td>May 20, 2023</td>
+              <td>
+                <span class="status-badge submitted">Submitted</span>
+              </td>
+              <td>
+                <span
+                  class="priority-badge medium"
+                  onclick="alert('Filtering by Medium priority')"
+                  >Medium</span
+                >
+              </td>
+              <td>
+                <div class="action-btns">
+                  <a href="{% url 'studentview' %}" class="action-btn view-btn">
+                    <i class="fas fa-eye"></i>
+                    <span>View</span>
+                  </a>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>Database Design Project</td>
+              <td>Computer Science</td>
+              <td>
+                <span class="faculty-name">Prof. Davis</span>
+              </td>
+              <td>-</td>
+              <td>May 25, 2023</td>
+              <td>
+                <span class="status-badge pending">Pending</span>
+              </td>
+              <td>
+                <span
+                  class="priority-badge high"
+                  onclick="alert('Filtering by High priority')"
+                  >High</span
+                >
+              </td>
+              <td>
+                <div class="action-btns">
+                  <a href="{% url 'studentview' %}" class="action-btn view-btn">
+                    <i class="fas fa-eye"></i>
+                    <span>View</span>
+                  </a>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td>Organic Chemistry Lab Report</td>
+              <td>Chemistry</td>
+              <td>
+                <span class="faculty-name">Dr. Wilson</span>
+              </td>
+              <td>C</td>
+              <td>May 8, 2023</td>
+              <td>
+                <span class="status-badge graded">Graded</span>
+              </td>
+              <td>
+                <span
+                  class="priority-badge medium"
+                  onclick="alert('Filtering by Medium priority')"
+                  >Medium</span
+                >
+              </td>
+              <td>
+                <div class="action-btns">
+                  <a href="{% url 'studentview' %}" class="action-btn view-btn">
+                    <i class="fas fa-eye"></i>
+                    <span>View</span>
+                  </a>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <script>
       // Add click handlers for demonstration
       document
         .querySelectorAll(
-          ".priority-badge, .action-btn, .nav-item, .logout-btn, .faculty-link"
+          ".priority-badge, .action-btn, .nav-item, .logout-btn"
         )
         .forEach((item) => {
           item.style.cursor = "pointer";
